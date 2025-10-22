@@ -48,12 +48,13 @@ product_df.show(3)
 region_df.show(3)
 sale_df.show(3)
 retailer_df.show(3)
-
+```
 
 
 ### 2. Assignment 1: Regional Analysis of Jacket Sales
 Calculate the total quantity of "Jacket" products sold per region.
 #### 2.1 PySpark Solution 
+```python
 from pyspark.sql.functions import sum
 
 # Filter Jacket products
@@ -67,11 +68,16 @@ jacket_sales_region_df = jacket_sales_retailer_df.join(region_df, on="city_id", 
 # Calculate total sales per region
 jacket_sales_summary = jacket_sales_region_df.groupBy("region_name").agg(sum("quantity").alias("total_sales"))
 jacket_sales_summary.show()
+```
+
 Result:
 region_name	total_sales
 Ege	632
 Marmara	5261
-#### 2.2 Spark SQL Solution 💾
+
+#### 2.2 Spark SQL Solution 
+
+```python
 # Create TempViews
 product_df.createOrReplaceTempView("product")
 sale_df.createOrReplaceTempView("sale")
@@ -91,10 +97,13 @@ GROUP BY r.region_name
 
 jacket_sales_summary_sql = spark.sql(query)
 jacket_sales_summary_sql.show()
+```
 
 ### 3. Assignment 2: Maximum Turnover by Seller Region
 Identify the region with the highest total turnover (total_amt).
-3.1 PySpark Solution 🐍
+#### 3.1 PySpark Solution 
+
+```python
 from pyspark.sql import functions as F
 
 # Join DataFrames
@@ -108,10 +117,14 @@ region_turnover_df = sales_retailer_region_df.groupBy("region_name").agg(F.sum("
 # Find region with maximum turnover
 max_turnover_region_df = region_turnover_df.orderBy(F.desc("total_turnover")).limit(1)
 max_turnover_region_df.show()
+```
+
 Result:
 region_name	total_turnover
 Marmara	635153
-3.2 Spark SQL Solution 💾
+
+#### 3.2 Spark SQL Solution 
+```python
 # Create TempViews
 sale_df.createOrReplaceTempView("sale")
 retailer_df.createOrReplaceTempView("retailer")
@@ -130,7 +143,8 @@ LIMIT 1
 
 max_turnover_region_df = spark.sql(query)
 max_turnover_region_df.show()
-Results and Analysis 💡
+```
+Results and Analysis 
 Assignment 1 (Jacket Sales): Marmara region had the highest sales (5261 units), followed by Ege (632 units).
 Assignment 2 (Maximum Turnover): Marmara region had the highest total turnover (635153).
 Validation: All operations performed with PySpark were verified using Spark SQL queries.
